@@ -13,7 +13,7 @@ provider "aws" {
   region  = "us-east-1"
   default_tags {
     tags = {
-      Environment = "Production"
+      Environment = var.environment
       Owner = "Emmanuel Mora"
       Project = "Labs"
       "Application ID" = "langwire"
@@ -72,7 +72,7 @@ resource "aws_nat_gateway" "main" {
   count = length(var.private_subnets)
   allocation_id = element(aws_eip.nat.*.id, count.index)
   subnet_id = element(aws_subnet.public.*.id, count.index)
-  depends_on = [aws_internet_aws_internet_gateway.main]
+  depends_on = [aws_internet_gateway.main]
 }
 
 resource "aws_eip" "nat" {
@@ -89,7 +89,7 @@ resource "aws_route_table" "private" {
 
 resource "aws_route" "private" {
   count = length(compact(var.private_subnets))
-  route_table_id = element(aws_routes_table.private.*.id, count.index)
+  route_table_id = element(aws_route_table.private.*.id, count.index)
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id = element(aws_nat_gateway.main.*.id, count.index)
 }
@@ -104,7 +104,7 @@ resource "aws_route_table_association" "private" {
 
 resource "aws_security_group" "alb" {
   name = "${var.name}-sg-alb-${var.environment}"
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.main.id
 
   ingress {
     protocol = "tcp"
@@ -133,7 +133,7 @@ resource "aws_security_group" "alb" {
 
 resource "aws_security_group" "ecs_tasks" {
   name = "${var.name}-sg-task-${var.environment}"
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.main.id
 
   ingress {
     protocol = "tcp"
@@ -178,11 +178,12 @@ resource "aws_ecr_lifecycle_policy" "main" {
   })
 }
 
-resource "aws_ec2_cluster" "main" {
+resource "aws_ecs_cluster" "main" {
   name = "${var.name}-cluster-${var.environment}"
 }
 
 resource "aws_ecs_task_definition" "main" {
+  family = "service"
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu = 256
@@ -190,10 +191,10 @@ resource "aws_ecs_task_definition" "main" {
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode([{
-    name = "${var.name}-contaienr-${var.environment}"
-    image = "${var.container_image}:latest"
+    name = "langwire-${var.environment}"
+    image = "ubuntu:latest"
     essential = true
-    environment = var.container_environment
+    environment = []
     portMappings = [{
       protocol = "tcp"
       containerPort = var.container_port
@@ -208,7 +209,7 @@ resource "aws_iam_role" "ecs_task_role" {
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
-  "Statement" [
+  "Statement": [
     {
       "Action": "sts:AssumeRole",
       "Principal": {
@@ -228,7 +229,7 @@ resource "aws_iam_policy" "dynamodb" {
 
   policy = <<EOF
 {
-  "Version" "2012-10-17",
+  "Version": "2012-10-17",
   "Statement": [
     {
       "Effect": "Allow",
@@ -242,10 +243,10 @@ resource "aws_iam_policy" "dynamodb" {
         "dynamodb:GetItem",
         "dynamodb:Scan",
         "dynamodb:Query",
-        "dynamodb:UpdateItem"
+        "dynamodb:UpdateItem",
         "dynamodb:UpdateTable"
       ],
-      "Resource": "*
+      "Resource": "*"
     }
   ]
 }
@@ -293,13 +294,13 @@ resource "aws_ecs_service" "main" {
   scheduling_strategy = "REPLICA"
 
   network_configuration {
-    security_groups = var.ecs_service_security_groups
-    subnets = var.subnets.*.id
+    security_groups = aws_security_group.ecs_tasks
+    subnets = var.private_subnets.*.id
     assign_public_ip = false
   }
 
   load_balancer {
-    target_group_arn = var.aws_alb_target_group_arn
+    target_group_arn = aws_alb_target_group.main
     container_name = "${var.name}-container-${var.environment}"
     container_port = var.container_port
   }
@@ -315,8 +316,8 @@ resource "aws_lb" "main" {
   name = "${var.name}-alb-${var.environment}"
   internal = false
   load_balancer_type = "application"
-  security_groups = var.alb_security_groups
-  subnets = var.subnets.*.id
+  security_groups = aws_security_group.alb
+  subnets = var.public_subnets.*.id
 
   enable_deletion_protection = false
 }
@@ -325,7 +326,7 @@ resource "aws_alb_target_group" "main" {
   name = "${var.name}-tg-${var.environment}"
   port = 80
   protocol = "HTTP"
-  vpc_id = var.vpc_id
+  vpc_id = aws_vpc.main.id
   target_type = "ip"
 
   health_check {
@@ -361,9 +362,9 @@ resource "aws_alb_listener" "https" {
   protocol = "HTTPS"
 
   ssl_policy = "ELBSecurityPolicy-2016-08"
-  certificate_arn = var.alb_tls_cert_arn
+  # certificate_arn = var.alb_tls_cert_arn
 
-  default_Action {
+  default_action {
     target_group_arn = aws_alb_target_group.main.id
     type = "forward"
   }
@@ -372,7 +373,7 @@ resource "aws_alb_listener" "https" {
 # Autoscaling
 
 resource "aws_appautoscaling_target" "ecs_target" {
-  max_capacity = 4
+  max_capacity = 2
   min_capacity = 1
   resource_id = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.main.name}"
   scalable_dimension = "ecs:service:DesiredCount"
