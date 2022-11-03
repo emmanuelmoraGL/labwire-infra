@@ -23,7 +23,7 @@ resource "aws_ecs_task_definition" "main" {
     },
     {
       name = "parzu-${var.environment}"
-      image = "${aws_ecr_repository.main.name}:latest"
+      image = "${var.parzu_image_name}:latest"
       essential = true
       portMappings = [{
         protocol = "tcp"
@@ -51,6 +51,6 @@ resource "aws_ecs_service" "main" {
   }
 
   lifecycle {
-    ignore_changes = [task_definition, desired_count]
+    # ignore_changes = [task_definition, desired_count]
   }
 }

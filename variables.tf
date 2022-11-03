@@ -54,6 +54,11 @@ variable "parzu_container_port" {
   default     = 5003
 }
 
+variable "parzu_image_name" {
+  description = "Path to the public docker image of Parzu"
+  default     = "rsennrich/parzu"
+}
+
 variable "task_cpu" {
   description = "The number of cpu units used by the task"
   default     = 256
