@@ -15,7 +15,7 @@ terraform apply
 
 ## Infracost service
 This outputs estimations for the infra with breakdowns using the terraform repo. https://www.infracost.io
-After I run this initially, I decided to remove the NAT gateway with public/private subnets config to avoid extra $37/mo
+After I ran this, I decided to remove the NAT gateway with public/private subnets to avoid extra $37/mo.
 
 ```bash
 ❯ infracost breakdown --path=.
