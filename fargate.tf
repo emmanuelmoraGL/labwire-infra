@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "main" {
   container_definitions = jsonencode([
     {
       name = "langwire-${var.environment}"
-      image = "${aws_ecr_repository.main.name}:latest"
+      image = "${aws_ecr_repository.main.repository_url}:latest"
       essential = true
       portMappings = [{
         protocol = "tcp"
