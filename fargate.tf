@@ -17,8 +17,8 @@ resource "aws_ecs_task_definition" "main" {
       essential = true
       portMappings = [{
         protocol = "tcp"
-        containerPort = var.container_port
-        hostPort = var.container_port
+        containerPort = var.langwire_container_port
+        hostPort = var.langwire_container_port
       }],
     },
     {
@@ -27,8 +27,8 @@ resource "aws_ecs_task_definition" "main" {
       essential = true
       portMappings = [{
         protocol = "tcp"
-        containerPort = 5003
-        hostPort = 5003
+        containerPort = var.parzu_container_port 
+        hostPort = var.parzu_container_port
       }]
     }
   ])
