@@ -18,7 +18,7 @@ This outputs estimations for the infra with breakdowns using the terraform repo.
 After I ran this, I decided to remove the NAT gateway with public/private subnets to avoid extra $37/mo.
 
 ```bash
-❯ infracost breakdown --path=.
+❯ infracost breakdown --path=. --show-skipped
 Evaluating Terraform directory at .
   ✔ Downloading Terraform modules
   ✔ Evaluating Terraform directory
@@ -39,8 +39,19 @@ Project: gorillalogic/langwire-infra
 ──────────────────────────────────
 15 cloud resources were detected:
 ∙ 2 were estimated, 1 of which usage-based costs, see https://infracost.io/usage-file
-∙ 13 were free, rerun with --show-skipped to see details
-
+∙ 13 were free:
+  ∙ 2 x aws_iam_role
+  ∙ 1 x aws_ecr_lifecycle_policy
+  ∙ 1 x aws_ecs_cluster
+  ∙ 1 x aws_ecs_task_definition
+  ∙ 1 x aws_iam_role_policy_attachment
+  ∙ 1 x aws_internet_gateway
+  ∙ 1 x aws_route
+  ∙ 1 x aws_route_table
+  ∙ 1 x aws_route_table_association
+  ∙ 1 x aws_security_group
+  ∙ 1 x aws_subnet
+  ∙ 1 x aws_vpc
 ```
 
 ## References

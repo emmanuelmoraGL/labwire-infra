@@ -51,6 +51,7 @@ variable "langwire_container_port" {
 
 variable "parzu_container_port" {
   description = "The port where the ParZu container is exposed"
+  default     = 5003
 }
 
 variable "task_cpu" {
