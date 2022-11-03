@@ -10,16 +10,28 @@ resource "aws_ecs_task_definition" "main" {
   memory = var.task_memory
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn = aws_iam_role.ecs_task_role.arn
-  container_definitions = jsonencode([{
-    name = "langwire-${var.environment}"
-    image = "ubuntu:latest"
-    essential = true
-    portMappings = [{
-      protocol = "tcp"
-      containerPort = var.container_port
-      hostPort = var.container_port
-    }]
-  }])
+  container_definitions = jsonencode([
+    {
+      name = "langwire-${var.environment}"
+      image = "${aws_ecr_repository.main.name}:latest"
+      essential = true
+      portMappings = [{
+        protocol = "tcp"
+        containerPort = var.container_port
+        hostPort = var.container_port
+      }],
+    },
+    {
+      name = "parzu-${var.environment}"
+      image = "${aws_ecr_repository.main.name}:latest"
+      essential = true
+      portMappings = [{
+        protocol = "tcp"
+        containerPort = 5003
+        hostPort = 5003
+      }]
+    }
+  ])
 }
 
 resource "aws_ecs_service" "main" {
