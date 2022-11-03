@@ -1,5 +1,5 @@
 # langwire-infra
-Terraform files for AWS resources related to labwire
+Terraform files for AWS resources related to langwire
 
 ## How to run
 Currently, the .tfstate file is managed in my local machine, meaning that deploys of the infra can only be done via this way, or it can get out of sync. If the resources needs deletion, check all resources whose tags are defined in the [providers.tf](providers.tf) file.
