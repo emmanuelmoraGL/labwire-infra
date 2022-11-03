@@ -45,8 +45,8 @@ resource "aws_ecs_service" "main" {
   scheduling_strategy = "REPLICA"
 
   network_configuration {
-    security_groups = [aws_security_group.ecs_tasks.name]
-    subnets = var.public_subnets
+    security_groups = [aws_security_group.ecs_tasks.id]
+    subnets = aws_subnet.public.*.id
     assign_public_ip = true
   }
 
