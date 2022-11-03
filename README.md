@@ -42,3 +42,7 @@ Project: gorillalogic/langwire-infra
 ∙ 13 were free, rerun with --show-skipped to see details
 
 ```
+
+## References
+
+I based this setup on this blogpost https://engineering.finleap.com/posts/2020-02-20-ecs-fargate-terraform and removed some components for simplicity.
