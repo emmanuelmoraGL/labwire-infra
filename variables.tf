@@ -46,7 +46,7 @@ variable "service_desired_count" {
 
 variable "langwire_container_port" {
   description = "The port where the Langwire container port is exposed"
-  default     = 8000
+  default     = 80
 }
 
 variable "parzu_container_port" {
