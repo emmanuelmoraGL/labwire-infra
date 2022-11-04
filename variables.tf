@@ -74,9 +74,3 @@ variable "logs_retention_in_days" {
   default     = 30
   description = "Specifies the number of days you want to retain log events"
 }
-
-variable "health_check_path" {
-  type        = string
-  default     = "/healthcheck"
-  description = "The path where the load balancer can hit for health checks"
-}
