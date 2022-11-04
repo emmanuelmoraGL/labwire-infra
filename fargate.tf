@@ -24,6 +24,12 @@ resource "aws_ecs_task_definition" "main" {
         containerPort = var.langwire_container_port
         hostPort = var.langwire_container_port
       }]
+      environment = [
+        {
+          name = "RAILS_ENV"
+          value = "production"
+        }
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
