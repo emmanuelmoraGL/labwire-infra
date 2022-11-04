@@ -66,5 +66,11 @@ variable "task_cpu" {
 
 variable "task_memory" {
   description = "The amount (in MiB) of memory used by the task"
-  default     = 512
+  default     = 1024
+}
+
+variable "logs_retention_in_days" {
+  type        = number
+  default     = 30
+  description = "Specifies the number of days you want to retain log events"
 }

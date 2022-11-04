@@ -2,6 +2,10 @@ resource "aws_ecs_cluster" "main" {
   name = "${var.name}-cluster-${var.environment}"
 }
 
+locals {
+  aws_ecs_service_name = "${var.name}-service-${var.environment}"
+}
+
 resource "aws_ecs_task_definition" "main" {
   family = "service"
   network_mode = "awsvpc"
@@ -19,7 +23,16 @@ resource "aws_ecs_task_definition" "main" {
         protocol = "tcp"
         containerPort = var.langwire_container_port
         hostPort = var.langwire_container_port
-      }],
+
+      }]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group = "/fargate/service/${var.name}-${var.environment}"
+          awslogs-region = "${var.region}"
+          awslogs-stream-prefix = local.aws_ecs_service_name
+        }
+      }
     },
     {
       name = "parzu-${var.environment}"
@@ -30,12 +43,20 @@ resource "aws_ecs_task_definition" "main" {
         containerPort = var.parzu_container_port 
         hostPort = var.parzu_container_port
       }]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group = "/fargate/service/${var.name}-${var.environment}"
+          awslogs-region = "${var.region}"
+          awslogs-stream-prefix = local.aws_ecs_service_name
+        }
+      }
     }
   ])
 }
 
 resource "aws_ecs_service" "main" {
-  name = "${var.name}-service-${var.environment}"
+  name = local.aws_ecs_service_name
   cluster = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.main.arn
   desired_count = 1

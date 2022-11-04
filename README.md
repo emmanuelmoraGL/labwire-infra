@@ -57,3 +57,6 @@ Project: gorillalogic/langwire-infra
 ## References
 
 I based this setup on this blogpost https://engineering.finleap.com/posts/2020-02-20-ecs-fargate-terraform and removed some components for simplicity.
+
+## Future Work
+- Move ECS fargate to a private subnet, add a NAT Gateway and a ALB.
