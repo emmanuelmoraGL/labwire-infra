@@ -23,7 +23,6 @@ resource "aws_ecs_task_definition" "main" {
         protocol = "tcp"
         containerPort = var.langwire_container_port
         hostPort = var.langwire_container_port
-
       }]
       logConfiguration = {
         logDriver = "awslogs"
