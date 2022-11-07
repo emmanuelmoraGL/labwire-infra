@@ -74,3 +74,8 @@ variable "logs_retention_in_days" {
   default     = 30
   description = "Specifies the number of days you want to retain log events"
 }
+
+variable "dynamodb_table_name" {
+  type        = string
+  description = "Specifies which dynamodb table to write to"
+}
