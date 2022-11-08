@@ -56,6 +56,24 @@ resource "aws_ecs_task_definition" "main" {
           awslogs-stream-prefix = local.aws_ecs_service_name
         }
       }
+    },
+    {
+      name = "redis-${var.environment}"
+      image = "redis:latest"
+      essential = true
+      portMappings = [{
+        protocol = "tcp"
+        containerPort = 6379
+        hostPort = 6379
+      }]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group = "/fargate/service/${var.name}-${var.environment}"
+          awslogs-region = "${var.region}"
+          awslogs-stream-prefix = local.aws_ecs_service_name
+        }
+      }
     }
   ])
 }

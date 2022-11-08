@@ -54,6 +54,11 @@ variable "parzu_container_port" {
   default     = 5003
 }
 
+variable "redis_container_port" {
+  description = "The port where the Redis container is exposed"
+  default     = 6379
+}
+
 variable "parzu_image_name" {
   description = "Path to the public docker image of Parzu"
   default     = "rsennrich/parzu"
