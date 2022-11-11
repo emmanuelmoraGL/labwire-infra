@@ -1,0 +1,29 @@
+[1mProject:[0m gorillalogic/langwire-infra
+
+ [4mName[0m                                             [4mMonthly Qty[0m  [4mUnit[0m                    [4mMonthly Cost[0m 
+                                                                                                    
+ [1maws_cloudwatch_log_group.logs[0m                                                                      
+ [2m├─[0m Data ingested                           Monthly cost depends on usage: $0.50 per GB             
+ [2m├─[0m Archival Storage                        Monthly cost depends on usage: $0.03 per GB             
+ [2m└─[0m Insights queries data scanned           Monthly cost depends on usage: $0.005 per GB            
+                                                                                                    
+ [1maws_ecr_repository.main[0m                                                                            
+ [2m└─[0m Storage                                 Monthly cost depends on usage: $0.10 per GB             
+                                                                                                    
+ [1maws_ecs_service.main[0m                                                                               
+ [2m├─[0m Per GB per hour                                         2  GB                             $6.49 
+ [2m└─[0m Per vCPU per hour                                     0.5  CPU                           $14.78 
+                                                                                                    
+ [1maws_s3_bucket.bucket[0m                                                                               
+ [2m└─[0m Standard                                                                                        
+ [2m   ├─[0m Storage                              Monthly cost depends on usage: $0.023 per GB            
+ [2m   ├─[0m PUT, COPY, POST, LIST requests       Monthly cost depends on usage: $0.005 per 1k requests   
+ [2m   ├─[0m GET, SELECT, and all other requests  Monthly cost depends on usage: $0.0004 per 1k requests  
+ [2m   ├─[0m Select data scanned                  Monthly cost depends on usage: $0.002 per GB            
+ [2m   └─[0m Select data returned                 Monthly cost depends on usage: $0.0007 per GB           
+                                                                                                    
+[1m OVERALL TOTAL[0m                                                                               $21.26 
+──────────────────────────────────
+19 cloud resources were detected:
+∙ 4 were estimated, 3 of which include usage-based costs, see [4mhttps://infracost.io/usage-file[0m
+∙ 15 were free, rerun with --show-skipped to see details

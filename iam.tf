@@ -78,6 +78,27 @@ resource "aws_iam_policy" "dynamodb_access_policy" {
 EOF
 }
 
+resource "aws_iam_policy" "s3_bucket_access_policy" {
+  name = "${var.bucket_name}-s3-bucket-access"
+  path = "/"
+  description = "Provides access to ${var.bucket_name} s3 bucket"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::${var.bucket_name}/*"
+     }
+   ]
+ }
+EOF
+ }
+
 resource "aws_iam_role_policy_attachment" "ecs-task_execution-role-policy-attachment" {
   role = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
@@ -86,4 +107,9 @@ resource "aws_iam_role_policy_attachment" "ecs-task_execution-role-policy-attach
 resource "aws_iam_role_policy_attachment" "ecs-task_execution-role-policy-attachment-dynamodb" {
   role = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.dynamodb_access_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecs-task_execution-role-policy-attachment-s3" {
+  role = aws_iam_role.ecs_task_role.name
+  policy_arn = aws_iam_policy.s3_bucket_access_policy.arn
 }

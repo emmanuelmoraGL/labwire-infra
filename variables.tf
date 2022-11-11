@@ -84,3 +84,8 @@ variable "dynamodb_table_name" {
   type        = string
   description = "Specifies which dynamodb table to write to"
 }
+
+variable "bucket_name" {
+  type        = string
+  description = "Specifies the s3 bucket name to use"
+}
