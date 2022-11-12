@@ -71,7 +71,10 @@ resource "aws_iam_policy" "dynamodb_access_policy" {
                 "dynamodb:Update*",
                 "dynamodb:PutItem"
             ],
-            "Resource": "arn:aws:dynamodb:*:*:table/${var.dynamodb_table_name}"
+            "Resource":[ 
+              "arn:aws:dynamodb:*:*:table/${var.dynamodb_table_name}",
+              "arn:aws:dynamodb:*:*:table/${var.dynamodb_table_name}/*"
+            ]
         }
     ]
 }
