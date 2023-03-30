@@ -44,9 +44,14 @@ variable "service_desired_count" {
   default     = 2
 }
 
-variable "langwire_container_port" {
-  description = "The port where the Langwire container port is exposed"
+variable "langwire_rails_container_port" {
+  description = "The port where the Langwire container port (Rails) is exposed"
   default     = 80
+}
+
+variable "langwire_nodejs_container_port" {
+  description = "The port where the Langwire container port (NodeJS) is exposed"
+  default     = 8080
 }
 
 variable "parzu_container_port" {

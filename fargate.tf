@@ -17,16 +17,40 @@ resource "aws_ecs_task_definition" "main" {
   container_definitions = jsonencode([
     {
       name = "langwire-${var.environment}"
-      image = "${aws_ecr_repository.main.repository_url}:latest"
+      image = "${aws_ecr_repository.rails.repository_url}:latest"
       essential = true
       portMappings = [{
         protocol = "tcp"
-        containerPort = var.langwire_container_port
-        hostPort = var.langwire_container_port
+        containerPort = var.langwire_rails_container_port
+        hostPort = var.langwire_rails_container_port
       }]
       environment = [
         {
           name = "RAILS_ENV"
+          value = "production"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group = "/fargate/service/${var.name}-${var.environment}"
+          awslogs-region = "${var.region}"
+          awslogs-stream-prefix = local.aws_ecs_service_name
+        }
+      }
+    },
+    {
+      name = "langwire-nodejs-${var.environment}"
+      image = "${aws_ecr_repository.nodejs.repository_url}:latest"
+      essential = true
+      portMappings = [{
+        protocol = "tcp"
+        containerPort = var.langwire_nodejs_container_port
+        hostPort = var.langwire_nodejs_container_port
+      }]
+      environment = [
+        {
+          name = "NODE_ENV"
           value = "production"
         }
       ]
@@ -74,7 +98,7 @@ resource "aws_ecs_task_definition" "main" {
           awslogs-stream-prefix = local.aws_ecs_service_name
         }
       }
-    }
+    },
   ])
 }
 
