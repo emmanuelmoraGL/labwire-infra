@@ -51,7 +51,7 @@ variable "langwire_rails_container_port" {
 
 variable "langwire_nodejs_container_port" {
   description = "The port where the Langwire container port (NodeJS) is exposed"
-  default     = 8080
+  default     = 3000
 }
 
 variable "parzu_container_port" {
